@@ -514,14 +514,14 @@ class Dmail extends BaseScriptClass
                 ->where(
                     $queryBuilder->expr()->eq(
                         'uid',
-                        (int)$this->sys_dmail_uid
+                        intval($this->sys_dmail_uid)
                     )
                 )
                 ->set('issent', 0)
                 ->set('charset', $htmlmail->charset)
                 ->set('mailContent', $mailContent)
                 ->set('renderedSize', strlen($mailContent))
-                ->set('long_link_rdct_url', DirectMailUtility::getUrlBase($this->params['use_domain']))
+                ->set('long_link_rdct_url', $this->urlbase)
                 ->execute();
 
             if ($warningMsg) {
