@@ -157,7 +157,7 @@ class DirectMail extends AbstractPlugin
         // Substitute labels
         $markerArray = array();
         $markerArray = $this->addLabelsMarkers($markerArray);
-        $content = $this->cObj->substituteMarkerArray($content, $markerArray);
+        $content = $this->templateService->substituteMarkerArray($content, $markerArray);
 
         // User processing:
         $content = $this->userProcess('userProc', $content);
