@@ -432,7 +432,7 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
             ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $res = $queryBuilder->select('uid', 'pid', 'subject', 'scheduled', 'scheduled_begin', 'scheduled_end')
             ->from('sys_dmail')
-            ->add('where','pid=' . intval($this->id) .' AND scheduled>0')
+            ->add('where','pid=' . (int)$this->id .' AND scheduled>0')
             ->orderBy('scheduled','DESC')
             ->execute()
             ->fetchAll();
@@ -454,7 +454,7 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_dmail_maillog');
             $countres = $queryBuilder->count('*')
                 ->from('sys_dmail_maillog')
-                ->add('where','mid=' . intval($row['uid']) .
+                ->add('where','mid=' . (int)$row['uid'] .
                     ' AND response_type=0' .
                     ' AND html_sent>0')
                 ->execute();
