@@ -1164,7 +1164,7 @@ class Dmail extends BaseScriptClass
                 $connection->update(
                     'sys_dmail', // table
                     $updateFields,
-                    [ 'uid' => intval($this->sys_dmail_uid) ] // where
+                    [ 'uid' => (int)$this->sys_dmail_uid ]
                 );
 
 
@@ -1179,7 +1179,7 @@ class Dmail extends BaseScriptClass
         }
 
         // Setting flags and update the record:
-        if ($sentFlag && $this->CMD == 'send_mail_final') {
+        if ($sentFlag && $this->CMD === 'send_mail_final') {
 
             $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
             $connection = $connectionPool->getConnectionForTable('sys_dmail');
@@ -1187,7 +1187,7 @@ class Dmail extends BaseScriptClass
             $connection->update(
                 'sys_dmail', // table
                 ['issent' => 1],
-                [ 'uid' => intval($this->sys_dmail_uid) ] // where
+                [ 'uid' => (int)$this->sys_dmail_uid ]
             );
 
         }
