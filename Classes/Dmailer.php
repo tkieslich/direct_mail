@@ -421,7 +421,7 @@ class Dmailer
         foreach ($cArray as $bKey => $cP) {
             $key = substr($cP[0], 1);
             $isSubscribed = false;
-            if (!$key || (intval($userCategories) == -1)) {
+            if (!$key || ((int)$userCategories) == -1) {
                 $returnVal .= $cP[1];
                 $this->mediaList .= $cP['mediaList'];
                 if ($cP[1]) {
@@ -486,7 +486,7 @@ class Dmailer
             ->where(
                 $queryBuilder->expr()->eq(
                     $mm_table . '.uid_local',
-                    intval($uid)
+                    (int)$uid
                 )
             )
             ->execute();
@@ -632,7 +632,7 @@ class Dmailer
                     ->set('tstamp', time())
                     ->set('size', strlen($this->message))
                     ->set('parsetime', $parsetime)
-                    ->set('html_sent', intval($rC))
+                    ->set('html_sent', (int)$rC)
                     ->execute();
 
                 if (!$ok) {
@@ -697,7 +697,7 @@ class Dmailer
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    intval($mid)
+                    (int)$mid
                 )
             )
             ->set(
@@ -762,7 +762,7 @@ class Dmailer
             ->where(
                 $queryBuilder->expr()->eq(
                     'mid',
-                    intval($mid)
+                    (int)$mid
                 )
             )
             ->andWhere(
@@ -819,7 +819,7 @@ class Dmailer
             ->andWhere(
                 $queryBuilder->expr()->eq(
                     'mid',
-                    intval($mid)
+                    (int)$mid
                 )
             )
             ->andWhere(
@@ -850,7 +850,7 @@ class Dmailer
             ->where(
                 $queryBuilder->expr()->eq(
                     'mid',
-                    intval($mid)
+                    (int)$mid
                 )
             )
             ->andWhere(
@@ -892,15 +892,15 @@ class Dmailer
     {
         $temp_recip = explode('_', $rid);
         $insertFields = array(
-            'mid'       => intval($mid),
+            'mid'       => (int)$mid,
             'rtbl'      => $temp_recip[0],
-            'rid'       => intval($temp_recip[1]),
+            'rid'       => (int)$temp_recip[1],
             'email'     => $email,
             'tstamp'    => time(),
             'url'       => '',
             'size'      => $size,
             'parsetime' => $parsetime,
-            'html_sent' => intval($html)
+            'html_sent' => (int)$html
         );
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_dmail_maillog');
@@ -922,8 +922,8 @@ class Dmailer
      */
     public function runcron()
     {
-        $this->sendPerCycle = trim($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['sendPerCycle']) ? intval($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['sendPerCycle']) : 50;
-        $this->notificationJob = intval($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['notificationJob']);
+        $this->sendPerCycle = trim($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['sendPerCycle']) ? (int)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['sendPerCycle'] : 50;
+        $this->notificationJob = (int)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['notificationJob'];
 
         if (!is_object($this->getLanguageService())) {
             /* @var $LANG \TYPO3\CMS\Lang\LanguageService */
@@ -1594,7 +1594,7 @@ class Dmailer
                     $linkList .= '|' . $hrefData['subst_str'] . '|';
                     $hrefData['absRef'] = $this->absRef($hrefData['ref']);
                     $hrefData['tag'] = $tag;
-                    $hrefData['no_jumpurl'] = intval(trim($attributes['no_jumpurl'], '"')) ? 1 : 0;
+                    $hrefData['no_jumpurl'] = (int)trim($attributes['no_jumpurl'], '"') ? 1 : 0;
                     $this->theParts['html']['hrefs'][] = $hrefData;
                 }
             }
