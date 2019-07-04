@@ -166,8 +166,8 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
     public function main()
     {
         $this->CMD = GeneralUtility::_GP('CMD');
-        $this->pages_uid = intval(GeneralUtility::_GP('pages_uid'));
-        $this->sys_dmail_uid = intval(GeneralUtility::_GP('sys_dmail_uid'));
+        $this->pages_uid = (int)GeneralUtility::_GP('pages_uid');
+        $this->sys_dmail_uid = (int)GeneralUtility::_GP('sys_dmail_uid');
         $this->pageinfo = BackendUtility::readPageAccess($this->id, $this->perms_clause);
         $access = is_array($this->pageinfo) ? 1 : 0;
 
@@ -194,7 +194,7 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
             $this->doc->postCode='
 				<script language="javascript" type="text/javascript">
 					script_ended = 1;
-					if (top.fsMod) top.fsMod.recentIds[\'web\'] = ' . intval($this->id) . ';
+					if (top.fsMod) top.fsMod.recentIds[\'web\'] = ' . (int)$this->id . ';
 				</script>
 			';
 
@@ -215,7 +215,7 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
 
             $module = $this->pageinfo['module'];
             if (!$module) {
-                $pidrec=BackendUtility::getRecord('pages', intval($this->pageinfo['pid']));
+                $pidrec=BackendUtility::getRecord('pages', (int)$this->pageinfo['pid']);
                 $module=$pidrec['module'];
             }
             // Render content:
