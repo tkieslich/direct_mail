@@ -1969,7 +1969,7 @@ class Dmail extends BaseScriptClass
             ->getQueryBuilderForTable('pages');
 
         $res = $queryBuilder
-            ->select('uid', 'doktype', 'title', 'abstract')
+            ->select('uid', 'doktype', 'title', 'abstract', 'sys_language_uid')
             ->from('pages')
             ->add('where','pid=' . (int)$this->id .
                  ' AND ' . $this->perms_clause)
@@ -1987,36 +1987,38 @@ class Dmail extends BaseScriptClass
                 $pageIcon = $this->iconFactory->getIconForRecord('pages', $row, Icon::SIZE_SMALL) . '&nbsp;' .  htmlspecialchars($row['title']);
 
                 $previewHTMLLink = $previewTextLink = $createLink = '';
-                foreach ($languages as $languageUid => $lang) {
-                    $langParam = DirectMailUtility::getLanguageParam($languageUid, $this->params);
-                    $createLangParam = ($languageUid ? '&createMailFrom_LANG=' . $languageUid : '');
-                    $langIconOverlay = (count($languages) > 1 ? $lang['flagIcon'] : null);
-                    $langTitle = (count($languages) > 1 ? ' - ' . $lang['title'] : '');
-                    $plainParams = $this->implodedParams['plainParams'] . $langParam;
+                $languageUid = $row['sys_language_uid'];
+                $lang = $languages[$row['sys_language_uid']];
 
-                    $htmlParams = $this->implodedParams['HTMLParams'] . $langParam;
-                    $htmlIcon = $this->iconFactory->getIcon('direct_mail_preview_html', Icon::SIZE_SMALL, $langIconOverlay);
-                    $plainIcon = $this->iconFactory->getIcon('direct_mail_preview_plain', Icon::SIZE_SMALL, $langIconOverlay);
-                    $createIcon = $this->iconFactory->getIcon('direct_mail_newmail', Icon::SIZE_SMALL, $langIconOverlay);
+                $langParam = DirectMailUtility::getLanguageParam($languageUid, $this->params);
+                $createLangParam = ($languageUid ? '&createMailFrom_LANG=' . $languageUid : '');
+                $langIconOverlay = (count($languages) > 1 ? $lang['flagIcon'] : null);
+                $langTitle = (count($languages) > 1 ? ' - ' . $lang['title'] : '');
+                $plainParams = $this->implodedParams['plainParams'] . $langParam;
 
-                    $previewHTMLLink .= '<a href="#" onClick="' . BackendUtility::viewOnClick(
+                $htmlParams = $this->implodedParams['HTMLParams'] . $langParam;
+                $htmlIcon = $this->iconFactory->getIcon('direct_mail_preview_html', Icon::SIZE_SMALL);
+                $plainIcon = $this->iconFactory->getIcon('direct_mail_preview_plain', Icon::SIZE_SMALL);
+                $createIcon = $this->iconFactory->getIcon('direct_mail_newmail', Icon::SIZE_SMALL);
+                $langIcon = $this->iconFactory->getIcon($lang['flagIcon'], Icon::SIZE_SMALL);
+
+                $previewHTMLLink .= '<a href="#" onClick="' . BackendUtility::viewOnClick(
                         $row['uid'],
-                            $GLOBALS['BACK_PATH'],
+                        $GLOBALS['BACK_PATH'],
                         BackendUtility::BEgetRootLine($row['uid']),
                         '',
                         '',
-                            $htmlParams
-                    ) . '" title="' . htmlentities($GLOBALS['LANG']->getLL('nl_viewPage_HTML') . $langTitle) . '">' . $htmlIcon . '</a>';
-                    $previewTextLink .= '<a href="#" onClick="' . BackendUtility::viewOnClick(
+                        $htmlParams
+                    ) . '" title="' . htmlentities($GLOBALS['LANG']->getLL('nl_viewPage_HTML') . $langTitle) . '">' . $htmlIcon . $langIcon . '</a>';
+                $previewTextLink .= '<a href="#" onClick="' . BackendUtility::viewOnClick(
                         $row['uid'],
-                            $GLOBALS['BACK_PATH'],
+                        $GLOBALS['BACK_PATH'],
                         BackendUtility::BEgetRootLine($row['uid']),
                         '',
                         '',
-                            $plainParams
+                        $plainParams
                     ) . '" title="' . htmlentities($GLOBALS['LANG']->getLL('nl_viewPage_TXT') . $langTitle) . '">' . $plainIcon . '</a>';
-                    $createLink .= '<a href="' . $createDmailLink . $createLangParam . '" title="' . htmlentities($GLOBALS['LANG']->getLL('nl_create') . $langTitle) . '">' . $createIcon . '</a>';
-                }
+                $createLink .= '<a href="' . $createDmailLink . $createLangParam . '" title="' . htmlentities($GLOBALS['LANG']->getLL('nl_create') . $langTitle) . '">' . $createIcon . $langIcon . '</a>';
 
                 switch ($this->params['sendOptions']) {
                     case 1:
