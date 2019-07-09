@@ -1020,17 +1020,17 @@ class Dmail extends BaseScriptClass
 
         // send out non-personalized emails
         $simpleMailMode = GeneralUtility::_GP('mailingMode_simple');
+        $addresses = GeneralUtility::_GP('SET');
+        $addressList = $addresses['dmail_test_email'] ? $addresses['dmail_test_email'] : $this->MOD_SETTINGS['dmail_test_email'];
 
         $sentFlag = false;
-        if ($simpleMailMode) {
+        if ($simpleMailMode && $addressList) {
             // step 4, sending simple test emails
 
             // setting Testmail flag
             $htmlmail->testmail = $this->params['testmail'];
 
             // Fixing addresses:
-            $addresses = GeneralUtility::_GP('SET');
-            $addressList = $addresses['dmail_test_email'] ? $addresses['dmail_test_email'] : $this->MOD_SETTINGS['dmail_test_email'];
             $addresses = preg_split('|[' . LF . ',;]|', $addressList);
 
             foreach ($addresses as $key => $val) {
@@ -1190,6 +1190,16 @@ class Dmail extends BaseScriptClass
                 [ 'uid' => (int)$this->sys_dmail_uid ]
             );
 
+        }
+
+        if (!$flashMessage){
+            /* @var $flashMessage FlashMessage */
+            $flashMessage = GeneralUtility::makeInstance(
+                'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+                $sectionTitle . '' . $content,
+                $this->getLanguageService()->getLL('dmail_error'),
+                FlashMessage::OK
+            );
         }
 
         return GeneralUtility::makeInstance(FlashMessageRenderer::class)->render($flashMessage);
