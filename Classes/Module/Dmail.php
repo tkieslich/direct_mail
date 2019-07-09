@@ -1971,7 +1971,7 @@ class Dmail extends BaseScriptClass
         $res = $queryBuilder
             ->select('uid', 'doktype', 'title', 'abstract')
             ->from('pages')
-            ->add('where','pid=' . intval($this->id) .
+            ->add('where','pid=' . (int)$this->id .
                  ' AND ' . $this->perms_clause)
             ->orderBy('sorting')
             ->execute();
@@ -1980,7 +1980,7 @@ class Dmail extends BaseScriptClass
             $theOutput = $this->doc->render($this->getLanguageService()->getLL('nl_select'), $this->getLanguageService()->getLL('nl_select_msg1'));
         } else {
             $outLines = array();
-            while (($row = $res->fetch())) {
+            while ($row = $res->fetch()) {
                 $languages = $this->getAvailablePageLanguages($row['uid']);
 
                 $createDmailLink = BackendUtility::getModuleUrl('DirectMailNavFrame_DirectMail') . '&id=' . $this->id . '&createMailFrom_UID=' . $row['uid'] . '&fetchAtOnce=1&CMD=info';
@@ -2070,11 +2070,11 @@ class Dmail extends BaseScriptClass
             if ((int)$lang['uid'] > 0) {
 
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                    ->getQueryBuilderForTable('pages_language_overlay');
+                    ->getQueryBuilderForTable('pages');
                 $langRow = $queryBuilder
                     ->select('uid')
-                    ->from('pages_language_overlay')
-                    ->add('where','pid=' . (int)$pageUid .
+                    ->from('pages')
+                    ->add('where','l10n_parent=' . (int)$pageUid .
                         ' AND sys_language_uid=' . (int)$lang['uid'])
                     ->execute()
                     ->fetchAll();

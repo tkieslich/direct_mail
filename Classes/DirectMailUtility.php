@@ -1140,15 +1140,17 @@ class DirectMailUtility
         }
 
         $pageRecord = BackendUtility::getRecord('pages', $pageUid);
-        // Fetch page title from pages_language_overlay
+        // Fetch page title from pages
         if ($newRecord['sys_language_uid'] > 0) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages_language_overlay');
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
             $pageRecordOverlay = $queryBuilder->select('title')
-                ->from('pages_language_overlay')
-                ->add('where', 'pid=' . (int)$pageUid .
-                    ' AND sys_language_uid=' . $newRecord['sys_language_uid'])
+                ->from('pages')
+                ->where(
+                    $queryBuilder->expr()->eq('uid', (int)$pageUid),
+                    $queryBuilder->expr()->eq('sys_language_uid', (int)$newRecord['sys_language_uid'])
+                )
                 ->execute()
-                ->fetcth();
+                ->fetch();
             if (is_array($pageRecordOverlay)) {
                 $pageRecord['title'] = $pageRecordOverlay['title'];
             }
