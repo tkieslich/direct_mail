@@ -1705,13 +1705,32 @@ class Dmail extends BaseScriptClass
             $out = DirectMailUtility::fetchUrlContentsForDirectMailRecord($row, $this->params);
         }
 
-        // Todo Perhaps we should here check if TV is installed and fetch content from that instead of the old Columns...
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('pages');
+
+        $page = $queryBuilder
+            ->select('uid', 'pid', 'sys_language_uid', 'l10n_parent')
+            ->from('pages')
+            ->where(
+                $queryBuilder->expr()->eq('uid', (int)$this->pages_uid)
+            )
+            ->execute()
+            ->fetch();
+
+        $pageUid = $this->pages_uid;
+        if ($page['sys_language_uid'] > 0 && $page['l10n_parent'] > 0) {
+            $pageUid = $page['l10n_parent'];
+        }
+
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content');
         $res = $queryBuilder
             ->select('colPos', 'CType', 'uid', 'pid', 'header', 'bodytext', 'module_sys_dmail_category')
             ->from('tt_content')
-            ->add('where','pid=' . intval($this->pages_uid))
+            ->where(
+                $queryBuilder->expr()->eq('pid', (int)$pageUid),
+                $queryBuilder->expr()->eq('sys_language_uid', (int)$page['sys_language_uid'])
+            )
             ->orderBy('colPos')
             ->addOrderBy('sorting')
             ->execute()
