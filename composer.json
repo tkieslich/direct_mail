@@ -23,7 +23,8 @@
   },
   "require": {
     "typo3/cms-core": ">=7.6,<10.0",
-    "friendsoftypo3/tt-address": ">=3.2.2"
+    "friendsoftypo3/tt-address": ">=3.2.2",
+    "friendsoftypo3/rdct": ">=1.0"
   },
   "autoload": {
     "psr-4": {
